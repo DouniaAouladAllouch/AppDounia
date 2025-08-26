@@ -1,6 +1,5 @@
 name: Build and Test Docker
 
-# Déclenchement du workflow à chaque push ou pull request sur main
 on:
   push:
     branches:
@@ -12,27 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1?? Récupérer le code depuis GitHub
+      # 1. Récupérer le code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2?? Vérifier la version de Docker
+      # 2. Vérifier Docker
       - name: Check Docker version
         run: docker --version
 
       - name: Check Docker Compose version
         run: docker compose version
 
-      # 3?? Construire et lancer Docker Compose (API + DB)
+      # 3. Construire et lancer Docker Compose
       - name: Build and run Docker Compose
         run: docker compose up -d --build
 
-      # 4?? Attendre que l'API soit prête **depuis le conteneur**
-      - name: Wait for API inside container
+      # 4. Attendre que l'API soit prête
+      - name: Wait for API
         run: |
-          echo "Waiting for API to be ready inside container..."
+          echo "Waiting for API to be ready..."
           for i in {1..12}; do
-            if docker compose exec api curl --silent --fail http://localhost/swagger; then
+            if curl --silent --fail http://localhost:5000/swagger; then
               echo "? API is ready!"
               exit 0
             fi
@@ -42,6 +41,6 @@ jobs:
           echo "? API did not respond in time"
           exit 1
 
-      # 5?? Arrêter et supprimer les conteneurs après le test
+      # 5. Arrêter et supprimer les conteneurs
       - name: Tear down Docker Compose
         run: docker compose down -v
