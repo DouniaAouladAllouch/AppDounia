@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "Waiting for API to be ready inside container..."
           for i in {1..24}; do
-            if docker compose exec  -T api curl --silent --fail http://localhost/swagger; then
+            if curl --silent --fail http://localhost:5000/swagger; then
               echo "? API is ready!"
               exit 0
             fi
@@ -39,6 +39,7 @@ jobs:
             sleep 5
           done
           echo "? API did not respond in time"
+          docker compose logs api
           exit 1
        
       # 5. Arrêter et supprimer les conteneurs après le test
