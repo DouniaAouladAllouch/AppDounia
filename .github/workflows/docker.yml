@@ -1,5 +1,6 @@
 name: Build and Test Docker
 
+# Déclenchement du workflow à chaque push ou pull request sur main
 on:
   push:
     branches:
@@ -26,13 +27,12 @@ jobs:
       - name: Build and run Docker Compose
         run: docker compose up -d --build
 
-      # 4?? Attendre que l'API soit prête (jusqu'à 60 secondes)
-      - name: Wait for API
+      # 4?? Attendre que l'API soit prête **depuis le conteneur**
+      - name: Wait for API inside container
         run: |
-          echo "Waiting for API to be ready..."
+          echo "Waiting for API to be ready inside container..."
           for i in {1..12}; do
-            if curl --silent --fail http://localhost:5000/swagger; then
-
+            if docker compose exec api curl --silent --fail http://localhost/swagger; then
               echo "? API is ready!"
               exit 0
             fi
