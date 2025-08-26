@@ -11,22 +11,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupérer le code
+      # 1. Récupérer le code depuis GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Vérifier Docker
+      # 2. Vérifier la version de Docker
       - name: Check Docker version
         run: docker --version
 
       - name: Check Docker Compose version
         run: docker compose version
 
-      # 3. Construire et lancer Docker Compose
+      # 3. Construire et lancer Docker Compose (API + DB)
       - name: Build and run Docker Compose
         run: docker compose up -d --build
 
-      # 4. Attendre que l'API soit prête
+      # 4. Attendre que l'API soit prête depuis le runner (localhost)
       - name: Wait for API
         run: |
           echo "Waiting for API to be ready..."
@@ -41,6 +41,6 @@ jobs:
           echo "? API did not respond in time"
           exit 1
 
-      # 5. Arrêter et supprimer les conteneurs
+      # 5. Arrêter et supprimer les conteneurs après le test
       - name: Tear down Docker Compose
         run: docker compose down -v
