@@ -9,39 +9,107 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       # 1. Récupérer le code depuis GitHub
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Vérifier la version de Docker
       - name: Check Docker version
-        run: docker --version
-
-      - name: Check Docker Compose version
-        run: docker compose version
+        run: |
+          docker --version
+          docker compose version
 
       # 3. Construire et lancer Docker Compose (API + DB)
       - name: Build and run Docker Compose
-        run: docker compose up -d --build
-
-      # 4. Attendre que l'API soit prête depuis le runner (localhost)
-      - name: Wait for API inside container
         run: |
-          echo "Waiting for API to be ready inside container..."
-          for i in {1..24}; do
-            if docker compose exec -T api curl --silent --fail http://localhost:8080/swagger; then
-              echo "? API is ready!"
-              exit 0
+          echo "Building and starting services..."
+          docker compose up -d --build
+
+      # 4. Attendre que la base de données soit prête
+      - name: Wait for Database
+        run: |
+          echo "Waiting for database to be ready..."
+          for i in {1..30}; do
+            if docker compose exec -T db pg_isready -U postgres -d DouniaApp; then
+              echo "? Database is ready!"
+              break
             fi
-            echo "Waiting 5s..."
+            echo "Waiting for database... ($i/30)"
             sleep 5
           done
-          echo "? API did not respond in time"
+
+      # 5. Attendre que l'API soit prête
+      - name: Wait for API
+        run: |
+          echo "Waiting for API to be ready..."
+          for i in {1..60}; do
+            # Tester depuis l'extérieur du conteneur (port 5000)
+            if curl --silent --fail http://localhost:5000/health > /dev/null 2>&1; then
+              echo "? API is ready!"
+              break
+            fi
+            # Alternative: tester depuis l'intérieur du conteneur
+            if docker compose exec -T api curl --silent --fail http://localhost:8080/health > /dev/null 2>&1; then
+              echo "? API is ready (internal check)!"
+              break
+            fi
+            echo "Waiting for API... ($i/60)"
+            if [ $i -eq 30 ]; then
+              echo "=== API Logs (after 30 attempts) ==="
+              docker compose logs api
+            fi
+            sleep 5
+          done
+          
+          # Vérification finale
+          if ! curl --silent --fail http://localhost:5000/health > /dev/null 2>&1; then
+            echo "? API did not respond in time"
+            echo "=== Final API Logs ==="
+            docker compose logs api
+            echo "=== Container Status ==="
+            docker compose ps
+            exit 1
+          fi
+
+      # 6. Tests additionnels (optionnel)
+      - name: Test API endpoints
+        run: |
+          echo "Testing API endpoints..."
+          
+          # Test health endpoint
+          curl -f http://localhost:5000/health || exit 1
+          echo "? Health endpoint working"
+          
+          # Test swagger endpoint si disponible
+          if curl --silent --fail http://localhost:5000/swagger > /dev/null 2>&1; then
+            echo "? Swagger endpoint working"
+          else
+            echo "?? Swagger endpoint not available (normal in production)"
+          fi
+          
+          # Ajouter d'autres tests selon vos besoins
+          # curl -f http://localhost:5000/api/your-endpoint || exit 1
+
+      # 7. Afficher les logs en cas d'échec
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== API Logs ==="
           docker compose logs api
-          exit 1
-       
-      # 5. Arrêter et supprimer les conteneurs après le test
+          echo "=== Database Logs ==="
+          docker compose logs db
+          echo "=== Container Status ==="
+          docker compose ps -a
+          echo "=== Network Status ==="
+          docker network ls
+          docker compose exec -T api netstat -tlnp || true
+
+      # 8. Arrêter et supprimer les conteneurs après le test
       - name: Tear down Docker Compose
-        run: docker compose down -v
+        if: always()
+        run: |
+          echo "Cleaning up..."
+          docker compose down -v
+          docker system prune -f

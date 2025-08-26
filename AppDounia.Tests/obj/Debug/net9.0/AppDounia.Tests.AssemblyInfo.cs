@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppDounia.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f83c88076133fd59239f403d8048d48fd1c33720")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppDounia.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppDounia.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
