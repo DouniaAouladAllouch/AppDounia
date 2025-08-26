@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:16
@@ -12,7 +14,8 @@ services:
 
   api:
     build:
-      context: ./AppDounia.API
+      context: ./       # <-- racine du repo
+      dockerfile: AppDounia.API/Dockerfile
     depends_on:
       - db
     environment:
