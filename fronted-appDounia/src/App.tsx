@@ -1,4 +1,4 @@
-// src/App.tsx
+
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header/Header";
 import HomePage from "./pages/HomePage";
@@ -12,7 +12,7 @@ function App() {
     <>
       <Header />
       <div style={{ paddingTop: "80px" }}>
-        {/* 👆 pour compenser le header fixé en haut */}
+        
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
