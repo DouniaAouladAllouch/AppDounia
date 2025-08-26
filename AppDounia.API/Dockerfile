@@ -22,4 +22,7 @@ COPY --from=build /app/publish .
 # Installer curl pour les healthchecks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
+# Forcer .NET à écouter sur le port 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
 ENTRYPOINT ["dotnet", "AppDounia.API.dll"]
