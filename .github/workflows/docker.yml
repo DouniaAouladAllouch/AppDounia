@@ -29,7 +29,7 @@ jobs:
       # 4. Attendre que l'API soit prête depuis le runner (localhost)
       - name: Wait for API
         run: |
-          echo "Waiting for API to be ready..."
+          echo "Waiting for API to be ready on port 5000..."
           for i in {1..12}; do
             if curl --silent --fail http://localhost:5000/swagger; then
               echo "? API is ready!"
