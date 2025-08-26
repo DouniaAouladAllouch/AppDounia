@@ -1,6 +1,5 @@
 name: Build and Test Docker
 
-# Déclenchement du workflow à chaque push ou pull request sur main
 on:
   push:
     branches:
@@ -25,12 +24,23 @@ jobs:
 
       # 3?? Construire et lancer Docker Compose (API + DB)
       - name: Build and run Docker Compose
-        run: |
-          docker compose up -d --build
-          sleep 20
-          # Vérifier que l'API est disponible sur le port exposé
-          curl http://localhost:5000/swagger || exit 1
+        run: docker compose up -d --build
 
-      # 4?? Arrêter et supprimer les conteneurs après le test
+      # 4?? Attendre que l'API soit prête (jusqu'à 60 secondes)
+      - name: Wait for API
+        run: |
+          echo "Waiting for API to be ready..."
+          for i in {1..12}; do
+            if curl -f http://localhost:5000/swagger; then
+              echo "? API is ready!"
+              exit 0
+            fi
+            echo "Waiting 5s..."
+            sleep 5
+          done
+          echo "? API did not respond in time"
+          exit 1
+
+      # 5?? Arrêter et supprimer les conteneurs après le test
       - name: Tear down Docker Compose
-        run: docker compose down
+        run: docker compose down -v
