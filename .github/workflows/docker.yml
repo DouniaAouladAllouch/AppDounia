@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "Waiting for API to be ready inside container..."
           for i in {1..24}; do
-            if curl --silent --fail http://localhost:5000/swagger; then
+            if curl --silent --fail http://localhost:8080/swagger; then
               echo "? API is ready!"
               exit 0
             fi
