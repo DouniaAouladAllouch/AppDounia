@@ -1,0 +1,11 @@
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\bin\Debug\net9.0\AppDounia.Domain.deps.json
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\bin\Debug\net9.0\AppDounia.Domain.dll
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\bin\Debug\net9.0\AppDounia.Domain.pdb
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.AssemblyInfoInputs.cache
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.AssemblyInfo.cs
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.csproj.CoreCompileInputs.cache
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.dll
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\refint\AppDounia.Domain.dll
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\AppDounia.Domain.pdb
+C:\Users\hp\Documents\ProjectTask\AppDounia\AppDounia.Domain\obj\Debug\net9.0\ref\AppDounia.Domain.dll
