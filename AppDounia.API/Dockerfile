@@ -11,7 +11,7 @@ COPY ["AppDounia.Infrastructure/AppDounia.Infrastructure.csproj", "AppDounia.Inf
 # Restaurer les packages
 RUN dotnet restore "AppDounia.API/AppDounia.API.csproj"
 
-# Copier le reste du code
+# Copier tout le reste du code
 COPY . .
 WORKDIR "/src/AppDounia.API"
 
