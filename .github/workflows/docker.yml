@@ -10,41 +10,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      db:
-        image: postgres:16
-        ports:
-          - 5434:5432  # port host -> conteneur
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 1234
-          POSTGRES_DB: DouniaApp
-        options: >-
-          --health-cmd="pg_isready -U postgres -d DouniaApp"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
+      # 1. Récupérer le code depuis GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Vérifier la version de Docker
       - name: Check Docker version
         run: docker --version
 
       - name: Check Docker Compose version
         run: docker compose version
 
-      # Build et up
+      # 3. Construire et lancer Docker Compose (API + DB)
       - name: Build and run Docker Compose
         run: docker compose up -d --build
 
-      # Wait for API à l'intérieur du conteneur
+      # 4. Attendre que l'API soit prête depuis le runner (localhost)
       - name: Wait for API inside container
         run: |
           echo "Waiting for API to be ready inside container..."
           for i in {1..24}; do
-            if docker compose exec -T api curl --silent --fail http://localhost:8080/swagger; then
+            if curl --silent --fail http://localhost:5000/swagger; then
               echo "? API is ready!"
               exit 0
             fi
@@ -54,7 +41,7 @@ jobs:
           echo "? API did not respond in time"
           docker compose logs api
           exit 1
-
-      # Tear down
+       
+      # 5. Arrêter et supprimer les conteneurs après le test
       - name: Tear down Docker Compose
         run: docker compose down -v
